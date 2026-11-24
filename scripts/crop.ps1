@@ -3,8 +3,8 @@ param(
     [int]$tw = 1920,
     [int]$th = 1080
 )
-# 将图片裁剪/缩放到目标尺寸（居中裁切保持比例，再缩放）
-# 安全策略：先 Dispose 原图释放文件锁，再直接覆盖保存（不删原图，避免丢失）
+# Crop/scale image to target size (center crop keeping ratio, then resize)
+# Safe: dispose original first to release file lock, then overwrite (no delete original)
 Add-Type -AssemblyName System.Drawing
 $i = [System.Drawing.Image]::FromFile($src)
 $sw = $i.Width; $sh = $i.Height
@@ -24,8 +24,7 @@ $g.DrawImage($i,
     (New-Object System.Drawing.Rectangle([int]$cx, [int]$cy, [int]$cw, [int]$ch)),
     [System.Drawing.GraphicsUnit]::Pixel)
 $g.Dispose()
-$i.Dispose()  # 先释放原图文件锁
-# 直接覆盖保存（不删原图，即使 Save 失败原图仍在）
+$i.Dispose()
 $enc = [System.Drawing.Imaging.ImageCodecInfo]::GetImageEncoders() | Where-Object { $_.FormatID -eq ([System.Drawing.Imaging.ImageFormat]::Jpeg).Guid }
 $params = New-Object System.Drawing.Imaging.EncoderParameters(1)
 $params.Param[0] = New-Object System.Drawing.Imaging.EncoderParameter([System.Drawing.Imaging.Encoder]::Quality, 90L)

@@ -268,12 +268,15 @@ export async function crawlImage(
     }
 
     if (source === 'dmoe') {
-        // Dmoe 樱花二次元 API（国内可用，5200+ 动漫图，百度缓存+新浪图床）
-        // https://www.dmoe.cc/random.php?return=json → { imgurl }
+        // Dmoe 樱花二次元 API（国内可用，5200+ 动漫图）
+        // imgurl 可能是百度缓存 URL（防盗链），解析出原始 sinaimg.cn URL
         const apiUrl = 'https://www.dmoe.cc/random.php?return=json';
         const json = await getJson<any>(apiUrl);
-        const imgUrl = json?.imgurl;
+        let imgUrl: string = json?.imgurl;
         if (!imgUrl) { throw new Error('Dmoe 返回无图片URL'); }
+        // 解析百度缓存 URL 里的原始图地址：?url=https%3A%2F%2Ftvax3.sinaimg.cn%2F...
+        const bdMatch = imgUrl.match(/url=([^&]+)/);
+        if (bdMatch) { imgUrl = decodeURIComponent(bdMatch[1]); }
         await downloadAndCrop(imgUrl, dest);
         return { localPath: dest, sourceUrl: imgUrl, sourceLabel: 'Dmoe樱花动漫' };
     }
