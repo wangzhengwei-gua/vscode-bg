@@ -2,7 +2,7 @@
     "name": "vscode-bg-editor",
     "displayName": "Background Editor",
     "description": "为 VSCode 代码编辑区设置背景图：支持本地图片、在线爬取图片、透明度调节、模糊度调节",
-    "version": "0.5.1",
+    "version": "0.6.0",
     "publisher": "wangzhengwei",
     "license": "MIT",
     "repository": {
@@ -122,13 +122,15 @@
                 },
                 "bgEditor.source": {
                     "type": "string",
-                    "enum": ["picsum", "wallhaven", "konachan", "yandere", "wallpaper", "local"],
+                    "enum": ["picsum", "wallhaven", "konachan", "yandere", "wallpaper", "dmoe", "mtyqx", "local"],
                     "enumDescriptions": [
-                        "Picsum 随机风景",
-                        "Wallhaven（关键词+动漫分类搜索）",
-                        "Konachan 动漫壁纸专门站",
-                        "Yandere 动漫图片站",
-                        "Wallpaper Engine 动漫少女壁纸（Steam 预览图）",
+                        "Picsum 随机风景（✅可用）",
+                        "Wallhaven（⚠️国内可能连不上）",
+                        "Konachan 动漫站（⚠️国内可能连不上）",
+                        "Yandere 动漫站（⚠️国内可能连不上）",
+                        "Wallpaper Engine 动漫少女（✅可用，Steam预览图）",
+                        "Dmoe 樱花动漫（✅可用，国内CDN）",
+                        "墨天逸动漫（✅可用，国内CDN）",
                         "本地图片"
                     ],
                     "default": "wallpaper",

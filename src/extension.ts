@@ -178,7 +178,9 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('bgEditor.setSource', async () => {
             const items: Array<{ label: string; value: ImageSource; desc: string }> = [
-                { label: 'Wallpaper Engine', value: 'wallpaper', desc: '✅可用，动漫少女壁纸（Steam 预览图）' },
+                { label: 'Wallpaper Engine', value: 'wallpaper', desc: '✅可用，动漫少女（Steam预览图）' },
+                { label: 'Dmoe 樱花动漫', value: 'dmoe', desc: '✅可用，国内CDN秒开（5200+图）' },
+                { label: '墨天逸动漫', value: 'mtyqx', desc: '✅可用，国内CDN（3000+图）' },
                 { label: 'Picsum 随机风景', value: 'picsum', desc: '✅可用，随机风景图' },
                 { label: 'Konachan 动漫站', value: 'konachan', desc: '⚠️ 国内可能连不上' },
                 { label: 'Yandere 动漫站', value: 'yandere', desc: '⚠️ 国内可能连不上' },

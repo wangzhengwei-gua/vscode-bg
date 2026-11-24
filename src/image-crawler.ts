@@ -18,7 +18,7 @@ import * as path from 'path';
  * - random: 随机
  */
 
-export type ImageSource = 'picsum' | 'wallhaven' | 'konachan' | 'yandere' | 'wallpaper';
+export type ImageSource = 'picsum' | 'wallhaven' | 'konachan' | 'yandere' | 'wallpaper' | 'dmoe' | 'mtyqx';
 export type ImageType = 'anime' | 'scenery' | 'abstract' | 'dark' | 'random';
 
 export interface CrawlResult {
@@ -226,17 +226,36 @@ export async function crawlImage(
         return { localPath: dest, sourceUrl: imgUrl, sourceLabel: `Yandere动漫"${tags}"` };
     }
 
+    if (source === 'dmoe') {
+        // Dmoe 樱花二次元 API（国内可用，5200+ 动漫图，百度缓存+新浪图床）
+        // https://www.dmoe.cc/random.php?return=json → { imgurl }
+        const apiUrl = 'https://www.dmoe.cc/random.php?return=json';
+        const json = await getJson<any>(apiUrl);
+        const imgUrl = json?.imgurl;
+        if (!imgUrl) { throw new Error('Dmoe 返回无图片URL'); }
+        await download(imgUrl, dest);
+        return { localPath: dest, sourceUrl: imgUrl, sourceLabel: 'Dmoe樱花动漫' };
+    }
+
+    if (source === 'mtyqx') {
+        // 墨天逸随机动漫 API（国内可用，3000+ 图）
+        // https://api.mtyqx.cn/api/random.php?return=json → { imgurl }
+        const apiUrl = 'https://api.mtyqx.cn/api/random.php?return=json';
+        const json = await getJson<any>(apiUrl);
+        const imgUrl = json?.imgurl;
+        if (!imgUrl) { throw new Error('墨天逸返回无图片URL'); }
+        await download(imgUrl, dest);
+        return { localPath: dest, sourceUrl: imgUrl, sourceLabel: '墨天逸动漫' };
+    }
+
     if (source === 'wallpaper') {
         // Wallpaper Engine 动漫少女壁纸预览图
         // Steam API: GetPublishedFileDetails（无需 Key）→ preview_url → 下载
-        // type=anime 从 WALLPAPER_ANIME_IDS 池随机选；其他类型暂用同池（可扩展）
         const ids = WALLPAPER_ANIME_IDS;
-        // 随机选一个（避免连续重复：打乱后取第一个）
         const shuffled = [...ids].sort(() => Math.random() - 0.5);
         let lastErr: string = '';
         for (const id of shuffled) {
             try {
-                // 调 Steam API 查详情
                 const apiUrl = 'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/';
                 const postBody = `itemcount=1&publishedfileids[0]=${id}`;
                 const json = await postJson<any>(apiUrl, postBody);
