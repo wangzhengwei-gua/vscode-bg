@@ -1,0 +1,188 @@
+{
+    "name": "vscode-bg-editor",
+    "displayName": "Background Editor",
+    "description": "为 VSCode 代码编辑区设置背景图：支持本地图片、在线爬取图片、透明度调节、模糊度调节",
+    "version": "0.5.0",
+    "publisher": "wangzhengwei",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/wangzhengwei-gua/vscode-bg.git"
+    },
+    "engines": {
+        "vscode": "^1.80.0"
+    },
+    "categories": [
+        "Other",
+        "Themes"
+    ],
+    "main": "./out/extension.js",
+    "activationEvents": [
+        "onCommand:bgEditor.openPanel",
+        "onCommand:bgEditor.crawlNext",
+        "onCommand:bgEditor.toggle",
+        "onCommand:bgEditor.setOpacity",
+        "onCommand:bgEditor.toggleFullscreen",
+        "onCommand:bgEditor.setType",
+        "onCommand:bgEditor.setSource",
+        "onView:bgEditorTree"
+    ],
+    "contributes": {
+        "commands": [
+            {
+                "command": "bgEditor.openPanel",
+                "title": "Background Editor: 打开配置面板",
+                "category": "Background Editor"
+            },
+            {
+                "command": "bgEditor.crawlNext",
+                "title": "Background Editor: 换一张图（在线爬取）",
+                "category": "Background Editor"
+            },
+            {
+                "command": "bgEditor.toggle",
+                "title": "Background Editor: 开关背景",
+                "category": "Background Editor"
+            },
+            {
+                "command": "bgEditor.clear",
+                "title": "Background Editor: 清除背景并恢复",
+                "category": "Background Editor"
+            },
+            {
+                "command": "bgEditor.setLocalImage",
+                "title": "Background Editor: 选择本地图片",
+                "category": "Background Editor"
+            },
+            {
+                "command": "bgEditor.setOpacity",
+                "title": "Background Editor: 调节透明度",
+                "category": "Background Editor"
+            },
+            {
+                "command": "bgEditor.toggleFullscreen",
+                "title": "Background Editor: 切换全窗口/仅编辑区",
+                "category": "Background Editor"
+            },
+            {
+                "command": "bgEditor.setType",
+                "title": "Background Editor: 选择图片类型",
+                "category": "Background Editor"
+            },
+            {
+                "command": "bgEditor.setSource",
+                "title": "Background Editor: 选择图片来源",
+                "category": "Background Editor"
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "bgEditorContainer",
+                    "title": "Background Editor",
+                    "icon": "images/icon.svg"
+                }
+            ]
+        },
+        "views": {
+            "bgEditorContainer": [
+                {
+                    "id": "bgEditorTree",
+                    "name": "Background Editor"
+                }
+            ]
+        },
+        "configuration": {
+            "title": "Background Editor",
+            "properties": {
+                "bgEditor.enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "是否启用代码区背景图"
+                },
+                "bgEditor.opacity": {
+                    "type": "number",
+                    "default": 0.15,
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "背景图不透明度（0=完全透明，1=完全不透明）。建议 0.1~0.3 以保证代码可读"
+                },
+                "bgEditor.blur": {
+                    "type": "number",
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 30,
+                    "description": "背景图模糊度（px），0=不模糊"
+                },
+                "bgEditor.size": {
+                    "type": "string",
+                    "enum": ["cover", "contain", "auto 100%", "100% 100%"],
+                    "default": "cover",
+                    "description": "背景图填充方式"
+                },
+                "bgEditor.source": {
+                    "type": "string",
+                    "enum": ["picsum", "wallhaven", "konachan", "yandere", "wallpaper", "local"],
+                    "enumDescriptions": [
+                        "Picsum 随机风景",
+                        "Wallhaven（关键词+动漫分类搜索）",
+                        "Konachan 动漫壁纸专门站",
+                        "Yandere 动漫图片站",
+                        "Wallpaper Engine 动漫少女壁纸（Steam 预览图）",
+                        "本地图片"
+                    ],
+                    "default": "wallpaper",
+                    "description": "在线爬取图片来源"
+                },
+                "bgEditor.type": {
+                    "type": "string",
+                    "enum": ["anime", "scenery", "abstract", "dark", "random"],
+                    "enumDescriptions": ["动漫可爱女性角色", "风景自然", "抽象渐变", "深色系", "随机"],
+                    "default": "anime",
+                    "description": "图片类型预设（影响搜索关键词）"
+                },
+                "bgEditor.keyword": {
+                    "type": "string",
+                    "default": "",
+                    "description": "爬取关键词（仅 unsplash/wallhaven 生效），如 dark,abstract,galaxy"
+                },
+                "bgEditor.localImage": {
+                    "type": "string",
+                    "default": "",
+                    "description": "本地图片绝对路径（source=local 时使用）"
+                },
+                "bgEditor.dimOverlay": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "是否叠加暗色遮罩（提升代码可读性，推荐开启）"
+                },
+                "bgEditor.fullscreen": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "是否覆盖整个 VSCode 窗口（false=仅代码编辑区，true=侧边栏/标题栏/状态栏全覆盖）"
+                },
+                "bgEditor.saveDir": {
+                    "type": "string",
+                    "default": "D:\\VS壁纸",
+                    "description": "爬取的背景图保存目录（默认 D:\\VS壁纸）"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "package": "vsce package"
+    },
+    "devDependencies": {
+        "@types/node": "^18.0.0",
+        "@types/vscode": "^1.80.0",
+        "typescript": "^5.3.0",
+        "@vscode/vsce": "2.15.0"
+    },
+    "overrides": {
+        "cheerio": "1.0.0-rc.12",
+        "undici": "5.28.4"
+    }
+}
