@@ -55,6 +55,14 @@ const WALLPAPER_ANIME_IDS: string[] = [
     '3294161256',  // Anime-girl-oni-redmoon-4k
     '2715247617',  // Anime girl in bus
     '2716731977',  // Arcane Jinx x Vi
+    '2821407073',  // BloodMoon Japan 4k
+    '2821348277',  // Cooler Master Bedroom 4K
+    '2821553443',  // DuskWood
+    '2713648139',  // [FF14]素素贤者
+    '2715458208',  // Colossal Attack On Titan
+    '3390941115',  // Lo-Fi
+    '3010603714',  // 剑仙问情
+    '1734739010',  // 雪狼
 ];
 
 /** 类型预设关键词（用于 wallhaven / konachan / yandere 搜索） */
