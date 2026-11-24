@@ -38,9 +38,9 @@ const DEFAULT_H = 1080;
  * Steam API: GetPublishedFileDetails（无需 Key）→ preview_url → 下载预览图
  */
 const WALLPAPER_ANIME_IDS: string[] = [
+    '2974383923',  // 雪中少女（用户最爱，放第一位）
     '1821835302',  // Falling girl 落ちる少女
     '2800590196',  // [4K]太空的少女
-    '2974383923',  // 雪中少女
     '2097195057',  // 机车少女
     '3391355116',  // Asuka Langley Soryu 明日香
     '3389395431',  // 薇尔莉特-傍晚时分
@@ -63,6 +63,10 @@ const WALLPAPER_ANIME_IDS: string[] = [
     '3390941115',  // Lo-Fi
     '3010603714',  // 剑仙问情
     '1734739010',  // 雪狼
+    '2701515787',  // Emily and Corvo - Dishonored 2 4k
+    '2696206731',  // Aokana - Misaki Tobisawa 4K
+    '2699458969',  // Arcane Jinx Purple/Blue
+    '2696678680',  // Arcane Jinx, Time to say Goodbye
 ];
 
 /** 类型预设关键词（用于 wallhaven / konachan / yandere 搜索） */
