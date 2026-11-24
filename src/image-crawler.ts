@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as https from 'https';
 import * as http from 'http';
 import * as path from 'path';
+import { exec } from 'child_process';
 
 /**
  * 在线图片爬取器
@@ -50,6 +51,10 @@ const WALLPAPER_ANIME_IDS: string[] = [
     '3010228474',  // 蒙面少女
     '1762712871',  // Dark Souls 3 防火女
     '3004222851',  // 银凇止境——萨卡兹少女（明日方舟）
+    '3325250364',  // Anime girl 4K
+    '3294161256',  // Anime-girl-oni-redmoon-4k
+    '2715247617',  // Anime girl in bus
+    '2716731977',  // Arcane Jinx x Vi
 ];
 
 /** 类型预设关键词（用于 wallhaven / konachan / yandere 搜索） */
@@ -139,6 +144,30 @@ function postJson<T>(url: string, body: string): Promise<T> {
 function randSeed(): string { return Math.random().toString(36).slice(2, 10); }
 
 /**
+ * 裁剪/缩放图片到目标尺寸（居中裁切保持比例）
+ * 用 PowerShell + System.Drawing（Windows 自带，无需 npm 依赖）
+ * 非 Windows 或失败时保留原图
+ */
+function cropImage(filePath: string, targetW = 1920, targetH = 1080): Promise<void> {
+    return new Promise((resolve) => {
+        if (process.platform !== 'win32') { resolve(); return; }
+        const script = path.join(__dirname, '..', 'scripts', 'crop.ps1');
+        if (!fs.existsSync(script)) { resolve(); return; }
+        const cmd = `powershell -NoProfile -ExecutionPolicy Bypass -File "${script}" "${filePath}" ${targetW} ${targetH}`;
+        exec(cmd, { timeout: 15000 }, (err) => {
+            if (err) { /* 裁剪失败保留原图，不影响主流程 */ }
+            resolve();
+        });
+    });
+}
+
+/** 下载 + 裁剪到 16:9（1920x1080） */
+async function downloadAndCrop(url: string, dest: string): Promise<void> {
+    await download(url, dest);
+    await cropImage(dest);
+}
+
+/**
  * 爬取一张图片到 destDir
  * - source: 来源
  * - type: 类型预设（覆盖 keyword，若 keyword 非空则优先 keyword）
@@ -167,7 +196,7 @@ export async function crawlImage(
     if (source === 'picsum') {
         const seed = randSeed();
         const url = `https://picsum.photos/seed/${seed}/${w}/${h}`;
-        await download(url, dest);
+        await downloadAndCrop(url, dest);
         return { localPath: dest, sourceUrl: url, sourceLabel: 'Picsum 随机风景图' };
     }
 
@@ -185,7 +214,7 @@ export async function crawlImage(
         const pick = data[rand % Math.min(data.length, 20)];
         const imgUrl = pick?.path;
         if (!imgUrl) { throw new Error('Wallhaven 返回数据格式异常'); }
-        await download(imgUrl, dest);
+        await downloadAndCrop(imgUrl, dest);
         return { localPath: dest, sourceUrl: imgUrl, sourceLabel: `Wallhaven"${q}"` };
     }
 
@@ -204,7 +233,7 @@ export async function crawlImage(
         if (valid.length === 0) { throw new Error('Konachan 无可下载图片'); }
         const pick = valid[rand % valid.length];
         const imgUrl = pick.jpeg_url || pick.file_url;
-        await download(imgUrl, dest);
+        await downloadAndCrop(imgUrl, dest);
         return { localPath: dest, sourceUrl: imgUrl, sourceLabel: `Konachan动漫"${tags}"` };
     }
 
@@ -222,7 +251,7 @@ export async function crawlImage(
         if (valid.length === 0) { throw new Error('Yandere 无可下载图片'); }
         const pick = valid[rand % valid.length];
         const imgUrl = pick.jpeg_url || pick.file_url;
-        await download(imgUrl, dest);
+        await downloadAndCrop(imgUrl, dest);
         return { localPath: dest, sourceUrl: imgUrl, sourceLabel: `Yandere动漫"${tags}"` };
     }
 
@@ -233,7 +262,7 @@ export async function crawlImage(
         const json = await getJson<any>(apiUrl);
         const imgUrl = json?.imgurl;
         if (!imgUrl) { throw new Error('Dmoe 返回无图片URL'); }
-        await download(imgUrl, dest);
+        await downloadAndCrop(imgUrl, dest);
         return { localPath: dest, sourceUrl: imgUrl, sourceLabel: 'Dmoe樱花动漫' };
     }
 
@@ -244,7 +273,7 @@ export async function crawlImage(
         const json = await getJson<any>(apiUrl);
         const imgUrl = json?.imgurl;
         if (!imgUrl) { throw new Error('墨天逸返回无图片URL'); }
-        await download(imgUrl, dest);
+        await downloadAndCrop(imgUrl, dest);
         return { localPath: dest, sourceUrl: imgUrl, sourceLabel: '墨天逸动漫' };
     }
 
@@ -264,7 +293,7 @@ export async function crawlImage(
                 const previewUrl = pf.preview_url;
                 const title = pf.title || '未命名';
                 if (!previewUrl) { lastErr = `ID ${id} 无预览图`; continue; }
-                await download(previewUrl, dest);
+                await downloadAndCrop(previewUrl, dest);
                 return { localPath: dest, sourceUrl: previewUrl, sourceLabel: `Wallpaper Engine: ${title}` };
             } catch (e: any) {
                 lastErr = e?.message || String(e);
