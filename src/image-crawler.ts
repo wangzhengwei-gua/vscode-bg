@@ -279,6 +279,7 @@ export async function crawlImage(
 
 /** 清理缓存目录（保留最近 N 张） */
 export function cleanCache(cacheDir: string, keep = 5): void {
+    if (keep <= 0) { return; } // 0 或负数 = 不限制，保留所有
     if (!fs.existsSync(cacheDir)) { return; }
     const files = fs.readdirSync(cacheDir)
         .filter(f => /^wallpaper-\d{8}-\d{6}\.(jpg|png)$/.test(f))

@@ -69,7 +69,7 @@ export class BackgroundManager {
         const type = this.cfg().get<ImageType>('type', 'anime');
         try {
             const res = await crawlImage(source, keyword, this.cacheDir(), type);
-            cleanCache(this.cacheDir(), 5);
+            cleanCache(this.cacheDir(), this.cfg().get('maxCache', 0));
             const r = applyBackground({
                 imageUrl: res.localPath,
                 opacity: this.cfg().get('opacity', 0.15),
