@@ -90,7 +90,11 @@ export class BackgroundManager {
             }
             return r;
         } catch (e: any) {
-            return { ok: false, msg: '爬取失败：' + (e?.message || String(e)) };
+            const msg = e?.message || String(e);
+            const sourceHint = /Konachan|Yandere|Wallhaven|超时|ECONNREFUSED|ENETUNREACH/i.test(msg)
+                ? '（该源国内可能连不上，建议切换到 Wallpaper Engine 或 Picsum）'
+                : '';
+            return { ok: false, msg: '爬取失败：' + msg + sourceHint };
         }
     }
 

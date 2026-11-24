@@ -178,11 +178,11 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('bgEditor.setSource', async () => {
             const items: Array<{ label: string; value: ImageSource; desc: string }> = [
-                { label: 'Wallpaper Engine', value: 'wallpaper', desc: '默认，动漫少女壁纸（Steam 预览图）' },
-                { label: 'Konachan 动漫站', value: 'konachan', desc: '动漫壁纸专门站' },
-                { label: 'Yandere 动漫站', value: 'yandere', desc: '动漫图片站' },
-                { label: 'Wallhaven 综合站', value: 'wallhaven', desc: '综合壁纸站，支持动漫分类' },
-                { label: 'Picsum 随机风景', value: 'picsum', desc: '随机风景图' },
+                { label: 'Wallpaper Engine', value: 'wallpaper', desc: '✅可用，动漫少女壁纸（Steam 预览图）' },
+                { label: 'Picsum 随机风景', value: 'picsum', desc: '✅可用，随机风景图' },
+                { label: 'Konachan 动漫站', value: 'konachan', desc: '⚠️ 国内可能连不上' },
+                { label: 'Yandere 动漫站', value: 'yandere', desc: '⚠️ 国内可能连不上' },
+                { label: 'Wallhaven 综合站', value: 'wallhaven', desc: '⚠️ 国内可能连不上' },
             ];
             const pick = await vscode.window.showQuickPick(items, { placeHolder: '选择图片来源' });
             if (!pick) return;

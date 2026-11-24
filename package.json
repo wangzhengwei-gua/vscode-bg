@@ -2,7 +2,7 @@
     "name": "vscode-bg-editor",
     "displayName": "Background Editor",
     "description": "为 VSCode 代码编辑区设置背景图：支持本地图片、在线爬取图片、透明度调节、模糊度调节",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "publisher": "wangzhengwei",
     "license": "MIT",
     "repository": {
